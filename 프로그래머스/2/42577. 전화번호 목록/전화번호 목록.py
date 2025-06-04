@@ -1,7 +1,10 @@
 def solution(phone_book):
-    phone_book.sort()  # 1. 전화번호 정렬
-    for i in range(len(phone_book) - 1):
-        # 2. 인접한 두 번호만 비교
-        if phone_book[i+1].startswith(phone_book[i]):
-            return False  # 접두어가 있으면 False
-    return True  # 접두어가 없으면 True
+    phone_dict = {phone: 1 for phone in phone_book}  # 모든 번호를 해시에 저장
+
+    for phone in phone_book:
+        prefix = ""
+        for char in phone[:-1]:  # 마지막 글자 전까지 접두어 생성
+            prefix += char
+            if prefix in phone_dict:
+                return False  # 접두어가 해시에 존재하면 false 반환
+    return True

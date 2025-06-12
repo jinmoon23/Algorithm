@@ -5,6 +5,7 @@
 
 def solution(n, lost, reserve):
     answer = n
+    # lost와 reserve 배열 모두에 포함된 학생번호 제외하기
     lost_set = set(lost) - set(reserve)
     reserve_set = set(reserve) - set(lost)
     
@@ -13,7 +14,7 @@ def solution(n, lost, reserve):
         left = l - 1
         right = l + 1
         
-        for i,r in enumerate(reserve_set):
+        for r in reserve_set:
             if left == r:
                 answer += 1
                 reserve_set.remove(r)
@@ -22,5 +23,4 @@ def solution(n, lost, reserve):
                 answer += 1
                 reserve_set.remove(r)
                 break
-            
     return answer

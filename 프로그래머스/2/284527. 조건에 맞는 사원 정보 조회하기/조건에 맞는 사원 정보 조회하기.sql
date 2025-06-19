@@ -7,12 +7,6 @@ JOIN
     HR_GRADE G ON E.EMP_NO = G.EMP_NO
 GROUP BY
     E.EMP_NO
-HAVING
-    SUM(SCORE) = (
-        SELECT MAX(SUM_SCORE)
-        FROM (
-            SELECT SUM(G2.SCORE) AS SUM_SCORE
-            FROM HR_GRADE G2
-            GROUP BY G2.EMP_NO
-        ) TEMP
-    )
+ORDER BY
+    SCORE DESC
+LIMIT 1;

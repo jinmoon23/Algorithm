@@ -7,13 +7,15 @@ lines = [list(map(int,input().split())) for _ in range(M)]
 routes = [[] for _ in range(N + 1)]
 visited = [0 for _ in range(N + 1)]
 b_visited = [0 for _ in range(N + 1)]
+stack_visited = [0 for _ in range(N + 1)]
 
 # routes 배열을 [[], [2, 3, 4], [1, 4], [1, 4], [1, 2, 3]] 형태로 만들어 줌. 1번 노드와 연결된 노드는 2,3,4 노드라는 의미.
 for index, value in lines:
     routes[index].append(value)
     routes[value].append(index)
 print(routes)
-def dfs(s, path):
+
+def dfs_recursive(s, path):
     visited[s] = 1
     # 가능하다면 작은 노드부터 방문하라고 한 문제의 조건 준수를 위한 소팅
     routes[s].sort()
@@ -21,7 +23,22 @@ def dfs(s, path):
         if visited[new_start] != 1:
             path.append(new_start)
             # 간선 이동을 위한 재귀호출
-            dfs(new_start, path)
+            dfs_recursive(new_start, path)
+    answer_path = list(map(str, path))
+    return ' '.join(answer_path)
+
+def dfs_stack(s, path):
+    stack = [s]
+    stack_visited[s] = 1
+    while stack:
+        start_node = stack.pop()
+        if stack_visited[start_node] == 0:
+            stack_visited[start_node] = 1
+        path.append(start_node)
+        routes[start_node].sort(reverse=True)
+        for node in routes[start_node]:
+            if stack_visited[node] != 1:
+                stack.append(node)
     answer_path = list(map(str, path))
     return ' '.join(answer_path)
 
@@ -42,5 +59,6 @@ def bfs(s):
     answer_path = list(map(str, path))
     return ' '.join(answer_path)
 
-print(dfs(start, [start]))
+print(dfs_recursive(start, [start]))
+print(dfs_stack(start, []))
 print(bfs(start))

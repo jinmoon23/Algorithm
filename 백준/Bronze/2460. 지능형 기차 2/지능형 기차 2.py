@@ -1,18 +1,11 @@
 STATION = 10
 
-net_people = []
+max_people = 0
+current_people = 0
+
 for _ in range(STATION):
     out_p, in_p = map(int, input().split())
-    net_people.append(in_p - out_p)
-
-max_station_people = net_people[0]
-compare_number = 0
-
-for i in range(STATION):
-    if i - 1 < 0:
-        compare_number = net_people[i]
-    else:
-        compare_number += net_people[i]
-    if compare_number > max_station_people:
-        max_station_people = compare_number
-print(max_station_people)
+    current_people += in_p - out_p
+    if current_people > max_people:
+        max_people = current_people
+print(max_people)

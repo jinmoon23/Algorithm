@@ -1,20 +1,16 @@
 def solution(N, stages):
-    # 1부터 N+1을 순회하면서 (각각이 스테이지 번호)
-    # n보다 크거나 같은 값의 수를 분모로, n과 같은 값을 분자로 한 값을 실패율로 정의
-    # n이 N일 때는 마지막 스테이지를 통과하지 못한 상태
-    # n이 N+1일 때는 마지막 스테이지 통과 상태 -> 이건 고려안해도 될듯
-    fail_rate = []
-    for n in range(1, N+1):
-        top = 0
-        bottom = 0
-        for user_state in stages:
-            if user_state >= n:
-                bottom += 1
-            if user_state == n:
-                top += 1
-        if bottom == 0:
-            fail_rate.append((n,0))
+    # N이 5일 때 users 배열의 인덱스는 stage가 되고 값은 클리어중인 유저의 수를 의미함. 0번째 값은 의미없음.
+    # 7번째 인덱스 값은 마지막 스테이지 통과한 유저를 의미
+    users = [0] * (N + 2)
+    for stage in stages:
+        users[stage] += 1
+    result = []
+    for i in range(1, N+1):
+        total = sum(users[i:])
+        playing = users[i]
+        if playing == 0:
+            result.append((i,0))
         else:
-            fail_rate.append((n, top/bottom))
-    fail_rate = sorted(fail_rate, key= lambda x: x[1], reverse=True)
-    return [x for x, rate in fail_rate]
+            result.append((i,playing/total))
+    result = sorted(result, key= lambda x:x[1], reverse=True)
+    return [x for x, rate in result]

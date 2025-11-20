@@ -5,21 +5,22 @@ function solution(prices) {
     for (let i = 0; i < prices.length; i++) {
         while (true) {
             if (stack.length === 0) break;
-            const top = prices[stack[stack.length - 1]]
-            // 가격이 떨어진 초(i)
-            if (prices[i] < top) {
+            const stackTopTime = prices[stack[stack.length - 1]]
+            // 가격이 떨어지면
+            if (prices[i] < stackTopTime) {
                 // stack 에서 빼내고
-                const topIndex = stack.pop();
-                // answer[i]에 stack[top] 초 와의 차이 기록
-                answer[topIndex] = i - topIndex;
+                const pastTime = stack.pop();
+                // 현재 시간 - 직전 시간
+                // 이후의 연산에서 배제
+                answer[pastTime] = i - pastTime;
             } else break;
         }
         stack.push(i);
     }
     
-    const topIndex = stack.pop();
+    const lastTime = stack.pop();
     for (const time of stack) {
-        answer[time] = topIndex - time;
+        answer[time] = lastTime - time;
     }
     return answer;
 }

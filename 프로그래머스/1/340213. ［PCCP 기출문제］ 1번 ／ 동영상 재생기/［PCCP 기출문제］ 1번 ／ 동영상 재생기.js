@@ -1,52 +1,46 @@
 function solution(video_len, pos, op_start, op_end, commands) {
-    // "mm:ss" → 총 초
-    function strToSec(str) {
-        const [mm, ss] = str.split(':').map(Number);
-        return mm * 60 + ss;
+  function strToSec(str) {
+    const [minute, sec] = str.split(':').map((e) => Number(e));
+    const time = minute * 60 + sec;
+    return time;
+  } 
+  function timeToStr(time) {
+    const minute = parseInt(time / 60);
+    const sec = time % 60;
+    const str = `${minute.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    return str;
+  }
+  function inOpening(start, current, end) {
+    if ((start <= current) && (current <= end)) {
+      return true;
+    } return false;
+  }
+  const vSec = strToSec(video_len);
+  let current = strToSec(pos);
+  const opStart = strToSec(op_start);
+  const opEnd = strToSec(op_end);
+  
+  if (inOpening(opStart,current,opEnd)) {
+    current = opEnd;
+  }
+
+  for (const c of commands) {
+    if (c === 'next') {
+      if (current + 10 > vSec) {
+        current = vSec;
+      } else {
+        current += 10;
+      }
+    } else {
+      if (current - 10 < 0) {
+        current = 0;
+      } else {
+        current -= 10;
+      }
     }
-    
-    // 총 초 → "mm:ss"
-    function secToStr(sec) {
-        const mm = Math.floor(sec / 60);
-        const ss = sec % 60;
-        return `${mm.toString().padStart(2, '0')}:${ss.toString().padStart(2, '0')}`;
+    if (inOpening(opStart,current,opEnd)) {
+      current = opEnd;
     }
-    
-    // 오프닝 체크 (총 초 기준)
-    function isOpening(startSec, currentSec, endSec) {
-        return startSec <= currentSec && currentSec <= endSec;
-    }
-    
-    let currentSec = strToSec(pos);
-    const startSec = strToSec(op_start);
-    const endSec = strToSec(op_end);
-    const vEndSec = strToSec(video_len);
-    
-    // 초기 위치 스킵 체크
-    if (isOpening(startSec, currentSec, endSec)) {
-        currentSec = endSec;
-    }
-    
-    for (const cmd of commands) {
-        if (cmd === 'next') {
-            if (currentSec + 10 > vEndSec) {
-                currentSec = vEndSec;  // 끝으로 클램프
-            } else {
-                currentSec += 10;
-            }
-        } else {  // 'prev'
-            if (currentSec - 10 < 0) {
-                currentSec = 0;  // 처음으로 클램프
-            } else {
-                currentSec -= 10;
-            }
-        }
-        
-        // 이동 후 스킵 체크
-        if (isOpening(startSec, currentSec, endSec)) {
-            currentSec = endSec;
-        }
-    }
-    
-    return secToStr(currentSec);
+  }
+  return timeToStr(current);
 }

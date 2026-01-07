@@ -1,20 +1,18 @@
 function solution(progresses, speeds) {
     var answer = [];
-    let front = 0;
-    let rear = progresses.length;
+    const days = progresses.map((progress, i) => {
+        return Math.ceil((100 - progress) / speeds[i]);
+    })
     
-    while (front < rear) {
-        for (const [i, v] of speeds.entries()) {
-            progresses[i] += v;
+    while (days.length > 0) {
+        const currentDay = days.shift();
+        let count = 1;
+        // days.length > 0 조건을 확인하지 않으면 days[0]에서 런타임 에러 발생
+        while (currentDay >= days[0]) {
+            days.shift();
+            count++;
         }
-        if (progresses[front] >= 100) {
-            let count = 0
-            while (progresses[front] >= 100) {
-                front++;
-                count++;
-            }
-            answer.push(count);
-        }
+        answer.push(count);
     }
     return answer;
 }

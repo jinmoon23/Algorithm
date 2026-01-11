@@ -1,22 +1,25 @@
 function solution(participant, completion) {
     var answer = '';
-    const dict = {};
-    for (const person of participant) {
-        if(dict[person]) {
-            dict[person] += 1;
+    const personCount = new Map();
+    
+    for (person of participant) {
+        if (personCount.get(person)) {
+            personCount.set(person, personCount.get(person) + 1);
         } else {
-            dict[person] = 1;
+            personCount.set(person, 1); 
         }
     }
-    for (const person of completion) {
-        if(dict[person] > 0) {
-            dict[person] -= 1;
+    
+    for (person of completion) {
+        if (personCount.get(person)) {
+            personCount.set(person, personCount.get(person) - 1);
         }
     }
-    for (let [key, value] of Object.entries(dict)) {
-        if (value >= 1) {
-            answer = key;
+    
+    for (let [name, count] of personCount) {
+        if (count > 0) {
+            answer = name;
+            return answer;
         }
     }
-    return answer;
 }

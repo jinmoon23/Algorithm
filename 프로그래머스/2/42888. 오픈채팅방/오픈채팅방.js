@@ -3,33 +3,20 @@
 // 채팅방에 들어오고 나가거나, 닉네임을 변경한 기록이 담긴 문자열 배열 record
 // 최종적으로 방을 개설한 사람이 보게 되는 메시지를 문자열 배열 형태로 return
 function solution(record) {
-    const answer = [];
+    var answer = [];
     const idToName = {};
-
+    
     for (const log of record) {
-        const parts = log.split(' ');
-        const action = parts[0];
-        const id = parts[1];
-        const name = parts[2];  // Leave면 undefined
-
-        if (action !== 'Leave') {  // Enter 또는 Change일 때만 업데이트
-            idToName[id] = name;
-        }
+        const [action, id, name] = log.split(" ");
+        if (action === 'Leave') continue;
+        idToName[id] = name;
     }
-
+    
     for (const log of record) {
-        const parts = log.split(' ');
-        const action = parts[0];
-        const id = parts[1];
-
-        if (action === 'Enter') {
-            answer.push(`${idToName[id]}님이 들어왔습니다.`);
-        } else if (action === 'Leave') {
-            answer.push(`${idToName[id]}님이 나갔습니다.`);
-        }
-        // Change는 메시지 추가 안 함
+        const [action, id, _] = log.split(" ");
+        if (action === 'Enter') answer.push(`${idToName[id]}님이 들어왔습니다.`)
+        else if (action === 'Leave') answer.push(`${idToName[id]}님이 나갔습니다.`)
     }
-
     return answer;
 }
 

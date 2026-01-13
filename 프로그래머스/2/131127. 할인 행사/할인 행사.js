@@ -5,33 +5,32 @@
 
 function solution(want, number, discount) {
     var answer = 0;
+    // 1. want, number 활용 매핑
     const wantHash = {};
-    
-    for (let i = 0; i < want.length; i++) {
-        wantHash[want[i]] = number[i];
-    }
+    want.forEach((v,i) => {wantHash[v] = number[i]});
     
     for (let i = 0; i + 10 <= discount.length; i++) {
-        const sliced = discount.slice(i, i + 10);
-        const discountHash = {};
-        let flag = true;
-        for (const e of sliced) {
-            if (!wantHash[e]) continue; 
-            if (discountHash[e]) {
-                discountHash[e] += 1;
+        // 2. discount 배열을 10의 길이로 슬라이싱
+        const sliced = discount.slice(i,i + 10);
+        // 3. sliced를 활용한 매핑
+        const slicedHash = {};
+        for (const stuff of sliced) {
+            if (slicedHash[stuff]) {
+                slicedHash[stuff] += 1;
             } else {
-                discountHash[e] = 1;
+                slicedHash[stuff] = 1;
             }
         }
-        for (const e of want) {
-            if (!discountHash[e]) falg = false;
-            if (discountHash[e] >= wantHash[e]) continue;
-            else flag = false;   
+        // 4. 모두 할인받을 수 있는지 판단
+        let flag = true;
+        for (const stuff of want) {
+            // 5. 할인받고자 하는 품목이 slicedHash에 없다면
+            if (!slicedHash[stuff] || slicedHash[stuff] < wantHash[stuff]) {
+                flag = false;
+                break;
+            }
         }
-        if (flag) {
-            answer += 1;
-        }
+        if (flag) answer++;
     }
-    
     return answer;
 }

@@ -1,4 +1,3 @@
-#  보호 시작일(INS)보다 입양일(OUTS)이 더 빠른 동물의 아이디와 이름
 SELECT
     I.ANIMAL_ID, I.NAME
 FROM

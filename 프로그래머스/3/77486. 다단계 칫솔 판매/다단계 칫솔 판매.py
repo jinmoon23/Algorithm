@@ -1,22 +1,22 @@
 def solution(enroll, referral, seller, amount):
-    answer = []
     relation = {}
     total = {}
     
     for i in range(0, len(enroll)):
         relation[enroll[i]] = referral[i]
         total[enroll[i]] = 0
-    
-    for i in range(0, len(seller)):
-        money = amount[i] * 100
-        sender = seller[i]
         
-        while (sender != "-" and money > 0):
+    for i in range(0, len(seller)):
+        curr_sender = seller[i]
+        money = amount[i] * 100
+        
+        while (money > 0 and curr_sender != "-"):
             share = money // 10
-            receiver = relation[sender]
+            next_sender = relation[curr_sender]
             
-            total[sender] += money - share
+            total[curr_sender] += money - share
+            
             money = share
-            sender = receiver
-    
+            curr_sender = next_sender
+        
     return [total[name] for name in enroll]

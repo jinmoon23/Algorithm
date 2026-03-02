@@ -1,0 +1,12 @@
+# 음식종류별로 즐겨찾기수가 가장 많은 식당
+SELECT
+    I.FOOD_TYPE, I.REST_ID, I.REST_NAME, I.FAVORITES
+FROM
+    REST_INFO I JOIN (SELECT FOOD_TYPE, MAX(FAVORITES) AS FAVORITES
+                     FROM REST_INFO
+                      GROUP BY FOOD_TYPE
+                     ) T
+    ON I.FAVORITES = T.FAVORITES
+    AND I.FOOD_TYPE = T.FOOD_TYPE
+ORDER BY
+    FOOD_TYPE DESC;

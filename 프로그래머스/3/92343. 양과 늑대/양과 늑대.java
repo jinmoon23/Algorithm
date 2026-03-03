@@ -1,81 +1,68 @@
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Deque;
-import java.util.ArrayDeque;
+import java.util.ArrayList;
+
 import java.util.Set;
 import java.util.HashSet;
 
+import java.util.Deque;
+import java.util.ArrayDeque;
 
-// 당신이 모은 양의 수보다 늑대의 수가 같거나 더 많아지면 바로 모든 양을 잡아먹어 버립니다.
-// 중간에 양이 늑대에게 잡아먹히지 않도록 하면서 최대한 많은 수의 양을 모아서 다시 루트 노드로 돌아오려 합니다.
 class Solution {
-    // 3. State class 정의
+    // 3. State class 정의 -> 하나의 배열에 모두 같은 타입의 값만 들어가야 하기 때문에 class 활용
     public class State {
-        int current;
-        int sheepCount;
-        int wolfCount;
-        Set<Integer> availables;
+        int current, sheepCount, wolfCount;
+        Set<Integer> candidates;
         
-        State(int current, int sheepCount, int wolfCount, Set<Integer> availables) {
+        State(int current, int sheepCount, int wolfCount, Set<Integer> candidates) {
             this.current = current;
             this.sheepCount = sheepCount;
             this.wolfCount = wolfCount;
-            this.availables = availables;
+            this.candidates = candidates;
         }
     }
     
     public int solution(int[] info, int[][] edges) {
         int answer = 0;
-        // 1. info 길이를 갖는 relation 배열 생성
+        // 1. info 길이를 갖는 tree 구조 정의
         int n = info.length;
         List<List<Integer>> relation = new ArrayList<>();
         for (int i = 0; i < n; i++) relation.add(new ArrayList<>());
-        
         for (int[] edge : edges) {
             int p = edge[0], c = edge[1];
             relation.get(p).add(c);
         }
-        System.out.println(relation);
-        
-        // 2. maxSheep 설정
-        int maxSheep = 0;
-        
-        // 4. Deque 설정
+        // 2. Deque 정의
         Deque<State> q = new ArrayDeque<>();
-        q.addLast(new State(0, 1, 0, new HashSet<>()));
+        q.addLast(new State(0, 1, 0, new HashSet<>())); // 현재 노드, 양의 수, 늑대의 수, 진입 가능한 후보집합
         
-        // 5. BFS
         while (!q.isEmpty()) {
             State s = q.pollFirst();
             int current = s.current, sc = s.sheepCount, wc = s.wolfCount;
-            Set<Integer> availables = s.availables;
+            Set<Integer> candidates = s.candidates;
             
-            maxSheep = Math.max(maxSheep, sc);
+            answer = Math.max(answer, sc);
             
-            // 6. availables Set에 후보 노드 추가
+            // 4. candidates 후보집합 추가
             for (int child : relation.get(current)) {
-                availables.add(child);
+                candidates.add(child);
             }
-            
-            // 7. availables Set 순회하며 갈 수 있는 노드인지 판단
-            for (int next : availables) {
-                // 후보 노드가 늑대인 경우
-                if (info[next] == 1) {
-                    // 이동이 가능한 노드인 경우
+            // 5. candidates 순회하며 갈 수 있는 노드인지 판단
+            for (int candidate : candidates) {
+                // 후보노드에 늑대가 있는 경우
+                if (info[candidate] == 1) {
                     if (sc > wc + 1) {
-                        Set<Integer> newAvailables = new HashSet<>(availables);
-                        newAvailables.remove(next);
-                        q.addLast(new State(next, sc, wc + 1, newAvailables));
+                        Set<Integer> newCandidates = new HashSet<>(candidates);
+                        newCandidates.remove(candidate);
+                        q.addLast(new State(candidate, sc, wc + 1, newCandidates));
                     }
-                // 후보 노드가 양인 경우    
+                // 후보노드에 양이 있는 경우
                 } else {
-                    Set<Integer> newAvailables = new HashSet<>(availables);
-                    newAvailables.remove(next);
-                    q.addLast(new State(next, sc + 1, wc, newAvailables));
-                }    
+                    Set<Integer> newCandidates = new HashSet<>(candidates);
+                    newCandidates.remove(candidate);
+                    q.addLast(new State(candidate, sc + 1, wc, newCandidates));
+                }
             }
-            
-        }
-        return maxSheep;
+        }                  
+        return answer;
     }
 }

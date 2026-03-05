@@ -1,41 +1,45 @@
-// 중간에 양이 늑대에게 잡아먹히지 않도록 하면서 최대한 많은 수의 양을 모아서 다시 루트 노드로 돌아오려 합니다.
 function solution(info, edges) {
-    let maxSheep = 0;
+    var answer = 0;
+    // 1. info 길이를 가지는 트리를 edges 활용해서 생성
+    // edges 중첩 배열은 원소가 0번 인덱스는 부모 노드, 1번 인덱스는 자식 노드
     const n = info.length;
-    // 부모노드를 인덱스로, 자식노드배열이 값으로 가지는 배열
     const relation = Array.from({ length : n }, () => []);
-    for (const [p, c] of edges) relation[p].push(c);
-    
+    for (const [p, c] of edges) {
+        relation[p].push(c);
+    }
+
+    // 2. q 선언
     const q = [];
-    q.push([0, 1, 0, new Set()]); // 현재 위치, 양의 수, 늑대의 수, 방문 가능한 집합
+    q.push([0, 1, 0, new Set()]) // 현재 노드, 양의 수, 늑대의 수, 이동 가능한 후보 노드 집합
     
+    // 3. BFS
     while (q.length) {
-        const [current, sheepCount, wolfCount, availables] = q.shift();
+        let [current, sheepCount, wolfCount, candidates] = q.shift();
         
-        maxSheep = Math.max(maxSheep, sheepCount);
+        answer = Math.max(answer, sheepCount);
         
-        for (const next of relation[current]) {
-            availables.add(next);   
+        // 4. 후보 노드 집합에 이동이 가능한 후보 노드 삽입
+        // relation[current] = current에 연결된 자식 노드 배열 접근
+        for (const candidate of relation[current]) {
+            candidates.add(candidate);
         }
         
-        for (const next of availables) {
-            // 다음 노드가 늑대인 경우
-            if (info[next]) {
-                // 이전에 노드 이동이 가능했다는 것은 양의 수가 늑대보다 많았다는 의미.
-                // 따라서 늑대 노드에 와서 늑대를 1 추가해도 양의 수가 많은지 확인.
-                // 코드 진행이 가능하다는 것은 늑대 수를 1 추가해도 양이 더 많다는 것을 의미함.
+        // 5. candidates 집합 순회하며 조건 판단
+        for (const candidate of candidates) {
+            // 후보 노드가 늑대인 경우
+            if (info[candidate]) {
                 if (sheepCount > wolfCount + 1) {
-                    const newAvailables = new Set(availables);
-                    newAvailables.delete(next);
-                    q.push([next, sheepCount, wolfCount + 1, newAvailables]);
+                    const newCandidates = new Set(candidates);
+                    newCandidates.delete(candidate);
+                    q.push([candidate, sheepCount, wolfCount + 1, newCandidates]);
                 }
-            // 다음 노드가 양인 경우
+            // 후보 노드가 양인 경우    
             } else {
-                const newAvailables = new Set(availables);
-                newAvailables.delete(next);
-                q.push([next, sheepCount + 1, wolfCount, newAvailables]);
+                const newCandidates = new Set(candidates);
+                newCandidates.delete(candidate);
+                q.push([candidate, sheepCount + 1, wolfCount, newCandidates]);
             }
         }
     }
-    return maxSheep;
+    return answer;
 }

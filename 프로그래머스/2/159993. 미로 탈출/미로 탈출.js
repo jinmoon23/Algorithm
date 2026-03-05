@@ -10,12 +10,10 @@ function solution(maps) {
     for (let i = 0; i < n; i++) {
         for (let j = 0; j < m; j++) {
             if (maps[i][j] === 'S') {
-                si = i; 
-                sj = j;   
+                si = i; sj = j;   
             }
             if (maps[i][j] === 'L') {
-                li = i;
-                lj = j;   
+                li = i; lj = j;   
             }
         }
     }

@@ -1,6 +1,6 @@
 # [level 3] 자동차 대여 기록에서 대여중 / 대여 가능 여부 구분하기 - 157340 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/157340?language=oracle) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/157340) 
 
 ### 성능 요약
 
@@ -16,7 +16,7 @@ Empty
 
 ### 제출 일자
 
-2026년 03월 05일 23:55:12
+2026년 03월 06일 08:40:42
 
 ### 문제 설명
 

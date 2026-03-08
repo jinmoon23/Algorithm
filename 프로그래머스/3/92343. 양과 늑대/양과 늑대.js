@@ -1,43 +1,39 @@
 function solution(info, edges) {
     var answer = 0;
-    // 1. info 길이를 가지는 트리를 edges 활용해서 생성
-    // edges 중첩 배열은 원소가 0번 인덱스는 부모 노드, 1번 인덱스는 자식 노드
+    // 1. info 길이를 갖는 트리 edges 활용해서 생성
     const n = info.length;
-    const relation = Array.from({ length : n }, () => []);
+    const relation = Array.from({ length : n }, () => [])
     for (const [p, c] of edges) {
         relation[p].push(c);
     }
-
-    // 2. q 선언
+    // 2. 인접 노드 탐색을 위한 큐 생성
     const q = [];
-    q.push([0, 1, 0, new Set()]) // 현재 노드, 양의 수, 늑대의 수, 이동 가능한 후보 노드 집합
+    q.push([0, 1, 0, new Set()]); // 현재 노드, 양의 수, 늑대의 수, 이동 가능 후보 집합
     
-    // 3. BFS
+    // 3. bfs 탐색
     while (q.length) {
-        let [current, sheepCount, wolfCount, candidates] = q.shift();
-        
+        const [current, sheepCount, wolfCount, candidates] = q.shift();
         answer = Math.max(answer, sheepCount);
         
-        // 4. 후보 노드 집합에 이동이 가능한 후보 노드 삽입
-        // relation[current] = current에 연결된 자식 노드 배열 접근
+        // 4. candidates 집합에 후보 노드 삽입
+        // current 변수를 활용해 relation[current]로 이동 가능 후보 노드에 접근
         for (const candidate of relation[current]) {
             candidates.add(candidate);
         }
-        
-        // 5. candidates 집합 순회하며 조건 판단
-        for (const candidate of candidates) {
-            // 후보 노드가 늑대인 경우
-            if (info[candidate]) {
+        // 5. candidates 집합 순회하며 양과 늑대 판단
+        for (const next of candidates) {
+            // 늑대인 경우
+            if (info[next]) {
                 if (sheepCount > wolfCount + 1) {
                     const newCandidates = new Set(candidates);
-                    newCandidates.delete(candidate);
-                    q.push([candidate, sheepCount, wolfCount + 1, newCandidates]);
+                    newCandidates.delete(next);
+                    q.push([next, sheepCount, wolfCount + 1, newCandidates]);
                 }
-            // 후보 노드가 양인 경우    
+            // 양인 경우
             } else {
                 const newCandidates = new Set(candidates);
-                newCandidates.delete(candidate);
-                q.push([candidate, sheepCount + 1, wolfCount, newCandidates]);
+                newCandidates.delete(next);
+                q.push([next, sheepCount + 1, wolfCount, newCandidates]);
             }
         }
     }

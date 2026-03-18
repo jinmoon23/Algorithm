@@ -1,14 +1,12 @@
 import java.util.Arrays;
 
-
-
 class Solution {
-    public int find(int[] parent, int x) {
-        if (x == parent[x]) return x;
+    public int find(int[] parent, int i) {
+        if (i == parent[i]) return i;
         
-        parent[x] = find(parent, parent[x]);
+        parent[i] = find(parent, parent[i]);
         
-        return parent[x];
+        return parent[i];
     }
     
     public void union(int[] parent, int[] rank, int xroot, int yroot) {
@@ -18,30 +16,28 @@ class Solution {
             parent[xroot] = yroot;
         } else {
             parent[yroot] = xroot;
-            rank[xroot] += 1;
         }
     }
+    
     public int solution(int n, int[][] costs) {
-        Arrays.sort(costs, (a,b) -> a[2] - b[2]);
+        Arrays.sort(costs, (a, b) -> a[2] - b[2]);
         
-        int[] parent = new int[n]; int[] rank = new int[n];
-        
+        int[] parent = new int[n], rank = new int[n];
         for (int i = 0; i < n; i++) {
-            parent[i] = i;
-            rank[i] = 0;
+            parent[i] = i; rank[i] = 0;
         }
         
-        int minCost = 0;
-        int edges = 0;
+        int minCost = 0, edges = 0;
         
         for (int[] edge : costs) {
-            int x = find(parent, edge[0]);
-            int y = find(parent, edge[1]);
+            if (edges == n - 1) break;
             
-            if (x != y) {
-                union(parent, rank, x, y);
-                minCost += edge[2];
-                edges += 1;
+            int xroot = find(parent, edge[0]);
+            int yroot = find(parent, edge[1]);
+            
+            if (xroot != yroot) {
+                union(parent, rank, xroot, yroot);
+                minCost += edge[2]; edges += 1;
             }
         }
         return minCost;

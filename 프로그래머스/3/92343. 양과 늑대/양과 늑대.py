@@ -3,27 +3,29 @@ from collections import deque
 def solution(info, edges):
     answer = 0
     n = len(info)
-    relation = [[] for _ in range(n)]
-    for p, c in edges: relation[p].append(c)
+    relation = [[] for _ in range(n)];
+    for p,c in edges:
+        relation[p].append(c)
     
+    max_sheep = 0
     q = deque()
     q.append([0, 1, 0, set()])
     
-    while q:
-        curr_node, sheep_count, wolf_count, candidates = q.popleft()
+    while (q):
+        curr, sheep_count, wolf_count, candidates = q.popleft()
+        max_sheep = max(max_sheep, sheep_count)
         
-        answer = max(answer, sheep_count)
-        
-        for candidate in relation[curr_node]: candidates.add(candidate)
-        
-        for next_node in candidates:
-            if info[next_node]:
-                if sheep_count > wolf_count + 1:
-                    new_candidates = set(candidates)
-                    new_candidates.remove(next_node)
-                    q.append([next_node, sheep_count, wolf_count + 1, new_candidates])
+        next_nodes = relation[curr]
+        for node in next_nodes: candidates.add(node)
+        for nextNode in candidates:
+            if (info[nextNode]):
+                if (sheep_count > wolf_count + 1):
+                    newCan = set(candidates)
+                    newCan.remove(nextNode)
+                    q.append([nextNode, sheep_count, wolf_count + 1, newCan])
             else:
-                new_candidates = set(candidates)
-                new_candidates.remove(next_node)
-                q.append([next_node, sheep_count + 1, wolf_count, new_candidates])
-    return answer
+                newCan = set(candidates)
+                newCan.remove(nextNode)
+                q.append([nextNode, sheep_count + 1, wolf_count, newCan])
+                    
+    return max_sheep

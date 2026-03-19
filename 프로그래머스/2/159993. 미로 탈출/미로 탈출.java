@@ -2,34 +2,34 @@ import java.util.Deque;
 import java.util.ArrayDeque;
 
 class Solution {
-    public int bfs(String[] maps, int n, int m, int si, int sj, char target) {
-        int[][] delta = {{0,-1}, {-1,0}, {0,1}, {1,0}}; // 좌상우하
+    public int bfs(int i, int j, char target, String[] maps) {
+        int n = maps.length, m = maps[0].length();
         int[][] visited = new int[n][m];
+        int[][] dxy = {{0,-1},{-1,0},{0,1},{1,0}}; // 좌상우하
         Deque<int[]> q = new ArrayDeque<>();
-        q.addLast(new int[]{si, sj, 0});
-        visited[si][sj] = 1;
+        q.addLast(new int[]{i,j,0});
+        visited[i][j] = 1;
         
-        while (!q.isEmpty()) {
-            int[] popped = q.pollFirst();
-            int i = popped[0], j = popped[1], d = popped[2];
-            
-            if (maps[i].charAt(j) == target) return d;
-            
-            for (int[] dxy : delta) {
-                int dx = dxy[0], dy = dxy[1];
-                int nx = i + dx, ny = j + dy;
+        while(!q.isEmpty()) {
+            int[] poped = q.pollFirst();
+            int x = poped[0], y = poped[1], c = poped[2];
+            if (maps[x].charAt(y) == target) return c;
+            for (int[] dir : dxy) {
+                int dx = dir[0], dy = dir[1];
+                int nx = x + dx, ny = y + dy;
                 if (nx < 0 || ny < 0 || nx >= n || ny >= m) continue;
-                if (maps[nx].charAt(ny) == 'X') continue;
                 if (visited[nx][ny] == 1) continue;
+                if (maps[nx].charAt(ny) == 'X') continue;
                 
+                q.addLast(new int[]{nx, ny, c + 1});
                 visited[nx][ny] = 1;
-                q.addLast(new int[]{nx, ny, d + 1});
             }
+            
         }
         return -1;
     }
-    
     public int solution(String[] maps) {
+        int answer = 0;
         int n = maps.length, m = maps[0].length();
         int si = -1, sj = -1, li = -1, lj = -1;
         for (int i = 0; i < n; i++) {
@@ -41,11 +41,8 @@ class Solution {
                 }
             }
         }
-        int d1 = bfs(maps, n, m, si, sj, 'L');
-        if (d1 == -1) return -1;
-        int d2 = bfs(maps, n, m, li, lj, 'E');
-        if (d2 == -1) return -1;
-        
-        return d1 + d2;
+        int c1 = bfs(si, sj, 'L', maps), c2 = bfs(li, lj, 'E', maps);
+        if (c1 == -1) return -1; if (c2 == -1) return -1;
+        return c1 + c2;
     }
 }

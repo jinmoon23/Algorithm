@@ -1,18 +1,18 @@
 import java.util.List;
 import java.util.ArrayList;
 
-import java.util.Deque;
-import java.util.ArrayDeque;
-
 import java.util.Set;
 import java.util.HashSet;
 
+import java.util.Deque;
+import java.util.ArrayDeque;
+
 class State {
-    int current, sheepCount, wolfCount;
+    int curr, sheepCount, wolfCount;
     Set<Integer> candidates;
     
-    State(int current, int sheepCount, int wolfCount, Set<Integer> candidates) {
-        this.current = current;
+    State(int curr, int sheepCount, int wolfCount, Set<Integer> candidates) {
+        this.curr = curr;
         this.sheepCount = sheepCount;
         this.wolfCount = wolfCount;
         this.candidates = candidates;
@@ -21,46 +21,43 @@ class State {
 
 class Solution {
     public int solution(int[] info, int[][] edges) {
-        int answer = 0;
-        // 1.
         int n = info.length;
         List<List<Integer>> relation = new ArrayList<>();
         for (int i = 0; i < n; i++) relation.add(new ArrayList<>());
-        for (int[] edge : edges) {
-            int p = edge[0], c = edge[1];
+        for (int i = 0; i < edges.length; i++) {
+            int p = edges[i][0], c = edges[i][1];
             relation.get(p).add(c);
         }
-        // 2.
+        
+        int maxSheepCount = 0;
         Deque<State> q = new ArrayDeque<>();
-        q.addLast(new State(0,1,0,new HashSet<>()));
+        q.addLast(new State(0, 1, 0, new HashSet<>())); // 현재노드, 양의 수, 늑대의 수, 후보노드집합
         
         while (!q.isEmpty()) {
             State s = q.pollFirst();
-            int current = s.current, sc = s.sheepCount, wc = s.wolfCount;
+            int curr = s.curr, sc = s.sheepCount, wc = s.wolfCount;
             Set<Integer> candidates = s.candidates;
             
-            answer = Math.max(answer, sc);
+            maxSheepCount = Math.max(sc, maxSheepCount);
             
-            for (int candidate : relation.get(current)) {
-                candidates.add(candidate);
-            }
+            List<Integer> nextNodes = relation.get(curr);
             
+            for (int node : nextNodes) candidates.add(node);
             for (int next : candidates) {
-                // 늑대
                 if (info[next] == 1) {
                     if (sc > wc + 1) {
-                        Set<Integer> newCandi = new HashSet<>(candidates);
-                        newCandi.remove(next);
-                        q.addLast(new State(next, sc, wc + 1, newCandi));
+                        Set<Integer> newCan = new HashSet<>(candidates);
+                        newCan.remove(next);
+                        q.addLast(new State(next, sc, wc + 1, newCan));
                     }
-                // 양
                 } else {
-                    Set<Integer> newCandi = new HashSet<>(candidates);
-                    newCandi.remove(next);
-                    q.addLast(new State(next, sc + 1, wc, newCandi));
+                    Set<Integer> newCan = new HashSet<>(candidates);
+                    newCan.remove(next);
+                    q.addLast(new State(next, sc + 1, wc, newCan));
                 }
             }
         }
-        return answer;
+        
+        return maxSheepCount;
     }
 }
